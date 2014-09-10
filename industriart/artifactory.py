@@ -76,6 +76,46 @@ class Artifactory(object):
         url = posixpath.join(self.base, 'api/repositories')
         return self.get(url)
 
+    def _copy_or_move(self, action, source, target):
+        try:
+            if len(source) != 2:
+                raise ValueError("Source tuple not (repo, path)")
+        except TypeError:
+            raise TypeError("Source must be a tuple")
+
+        try:
+            if len(target) != 2:
+                raise ValueError("Target tuple not (repo, path)")
+        except TypeError:
+            raise TypeError("Source must be a tuple")
+
+        url = posixpath.join(self.base,
+                             'api', action,
+                             source[0], source[1])
+        dst = posixpath.join(target[0], target[1])
+
+        log.debug("%s %s", action.capitalize(), url)
+        # Parameter order matters for artifactory
+        return self.post(url, {'to': dst})
+
+    def copy(self, source, target):
+        """
+        Copy artifacts in the repository from soure to target
+
+        :arg tuple source: The source in the form (repo, path) to copy
+        :arg tuple target: The target in the form (repo, path) to copy
+        """
+        return self._copy_or_move('copy', source, target)
+
+    def move(self, source, target):
+        """
+        Move artifacts in the repository from soure to target
+
+        :arg tuple source: The source in the form (repo, path) to copy
+        :arg tuple target: The target in the form (repo, path) to copy
+        """
+        return self._copy_or_move('move', source, target)
+
     def _transform_url(self, url):
         """
         Helper to rewrite URLs. All artifactory URLs are passed through this method
