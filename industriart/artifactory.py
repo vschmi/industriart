@@ -97,6 +97,17 @@ class Artifactory(object):
         url = posixpath.join(self.base, 'api/repositories')
         return self.get(url)
 
+    def get_fileinfo(self, repo, file):
+        """
+        Return information about a file
+
+        :arg str repo: The repository where the file lives in
+        :arg str file: The path of the file
+        """
+        url = posixpath.join(self.base, 'api', 'storage',
+                             repo, file)
+        return self.get(url)
+
     def _copy_or_move(self, action, source, target):
         try:
             if len(source) != 2:
