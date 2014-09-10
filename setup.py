@@ -25,5 +25,6 @@ setup(name = "industriart",
       author = u'Guido Günther',
       author_email = 'agx@sigxcpu.org',
       packages = ['industriart'],
-      setup_requires=['nose>=0.11.1','requests>=1'],
+      install_requires=['requests>=1'],
+      setup_requires=['nose>=0.11.1','mock>=1.0.1'],
 )
