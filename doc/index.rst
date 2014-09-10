@@ -6,6 +6,8 @@
 Welcome to Industriart's documentation!
 =======================================
 
+Industriart is a Python wrapper for `JFrog's Artifactorie's REST API <http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API>`_.
+
 Contents:
 
 .. toctree::

@@ -39,6 +39,12 @@ class ArtifactoryNoPermission(ArtifactoryError):
 class Artifactory(object):
     """
     Extremely simple JFrog Artifactory API Wrapper
+
+    :arg str base: The base URL of to connect to, e.g. 'http://example.com/artifactory'
+    :arg str user: The user to connect as
+    :arg str password: The user's password
+
+    If not noted otherwise all methods return the deserialized JSON data.
     """
     def __init__(self, base, user=None, password=None):
         self.user = user
@@ -47,7 +53,14 @@ class Artifactory(object):
 
     def search_gavc(self, groupid=None, artifactid=None, version=None, classifier=None):
         """
-        Query the artifactory via Groupid, ArtifacId, Version
+        Query the artifactory via Groupid, ArtifacId, Version and classifier
+
+        :arg str groupid: The group id to search for
+        :arg str artifacid: The artifact id to search for
+        :arg str version: The version to search for
+        :arg str classifier: The classifier to search for (e.g. rpm)
+        :returns: The URLs of the found items
+        :rtype: list of str
         """
         path='api/search/gavc'
         param_map = {
@@ -67,12 +80,20 @@ class Artifactory(object):
 
 
     def calc_yum_metadata(self, repository):
+        """
+        Recalculate YUM metadata
+
+        :arg str repository: The repository to calculate the metadata for
+        """
         url = posixpath.join(self.base, 'api/yum', repository)
         params = { 'async': 0 }
         log.debug("Refreshing on %s" % url)
         return self.post(url, params)
 
     def get_repositories(self):
+        """
+        Get available repositories
+        """
         url = posixpath.join(self.base, 'api/repositories')
         return self.get(url)
 
@@ -171,6 +192,11 @@ class Artifactory(object):
     def get(self, url, params=None):
         """
         Perform a GET request on the artifactory
+
+        :arg str url: The URL to perform the get request on
+        :arg dict params: Additional URL params
+        :returns: The retrieved data deserialized from JSON if the
+            request returns JSON otherwise as plain string.
         """
         return self._request('GET', url, params)
 
@@ -178,5 +204,10 @@ class Artifactory(object):
     def post(self, url, params):
         """
         Perform a POST request on the artifactory
+
+        :arg str url: The URL to perform the get request on
+        :arg dict params: Additional URL params
+        :returns: The retrieved data deserialized from JSON if the
+            request returns JSON otherwise as plain string.
         """
         return self._request('POST', url, params)
