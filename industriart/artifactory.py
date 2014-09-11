@@ -51,6 +51,12 @@ class Artifactory(object):
         self.password = password
         self.base = base
 
+    def _strslash(self, path):
+        """
+        Strip leading '/' since posixpath.join will treat it as absolute otherwise
+        """
+        return path.lstrip('/')
+
     def search_gavc(self, groupid=None, artifactid=None, version=None, classifier=None):
         """
         Query the artifactory via Groupid, ArtifacId, Version and classifier
@@ -105,7 +111,7 @@ class Artifactory(object):
         :arg str file: The path of the file
         """
         url = posixpath.join(self.base, 'api', 'storage',
-                             repo, file)
+                             repo, self._strslash(file))
         return self.get(url)
 
     def _copy_or_move(self, action, source, target):
@@ -123,8 +129,8 @@ class Artifactory(object):
 
         url = posixpath.join(self.base,
                              'api', action,
-                             source[0], source[1])
-        dst = posixpath.join(target[0], target[1])
+                             source[0], self._strslash(source[1]))
+        dst = posixpath.join(target[0], self._strslash(target[1]))
 
         log.debug("%s %s", action.capitalize(), url)
         # Parameter order matters for artifactory

@@ -30,7 +30,7 @@ class TestArtifactory(unittest.TestCase):
         a = Artifactory('http://a.exmple.com')
         with patch.object(Artifactory, '_request') as mocked_request:
             mocked_request.side_effect = request_mock
-            ret = a.copy(('unstable','foo'), ('release', 'bar'))
+            ret = a.copy(('unstable','/foo'), ('release', 'bar'))
             self.assertEquals(ret[0], 'POST')
             self.assertEquals(ret[1], 'http://a.exmple.com/api/copy/unstable/foo')
             self.assertDictEqual(ret[2], {'to': 'release/bar'})
@@ -56,3 +56,12 @@ class TestArtifactory(unittest.TestCase):
             self.assertEquals(ret[0], 'POST')
             self.assertEquals(ret[1], 'http://a.exmple.com/api/move/unstable/foo')
             self.assertDictEqual(ret[2], {'to': 'release/bar'})
+
+    def test_filecopy(self):
+        a = Artifactory('http://a.exmple.com')
+        with patch.object(Artifactory, '_request') as mocked_request:
+            mocked_request.side_effect = request_mock
+            ret = a.get_fileinfo('unstable', '/foo')
+            self.assertEquals(ret[0], 'GET')
+            self.assertEquals(ret[1], 'http://a.exmple.com/api/storage/unstable/foo')
+            self.assertIsNone(ret[2])
