@@ -84,6 +84,16 @@ class Artifactory(object):
         log.debug("Searching on %s with %s" % (url, params))
         return self.get(url, params)['results']
 
+    def get_item_properties(self, url):
+        """
+        Gets item properties from a specific artefact.
+        :arg url: The url artefact to get the properties.
+                  example: {repoKey}/{ItemPath}
+        :returns: The Properties as list in an array
+        """
+        path=url + "?properties"
+        url = posixpath.join(self.base, path)
+        return self.get(url)['properties']
 
     def calc_yum_metadata(self, repository):
         """
